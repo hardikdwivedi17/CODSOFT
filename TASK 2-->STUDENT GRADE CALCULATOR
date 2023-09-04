@@ -1,0 +1,118 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class StudentGradeCalculator extends JFrame implements ActionListener {
+    private JTextField mathField, scienceField, socialField, englishField, sanskritField, hindiField;
+    private JLabel resultLabel;
+
+    public StudentGradeCalculator() {
+        setTitle("Student Grade Calculator");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridLayout(8, 2));
+        getContentPane().setBackground(Color.YELLOW);
+
+        JLabel mathLabel = new JLabel("Mathematics Marks:");
+        mathLabel.setForeground(Color.CYAN);
+        mathField = new JTextField();
+        JLabel scienceLabel = new JLabel("Science Marks:");
+        scienceLabel.setForeground(Color.CYAN);
+        scienceField = new JTextField();
+        JLabel socialLabel = new JLabel("Social Studies Marks:");
+        socialLabel.setForeground(Color.CYAN);
+        socialField = new JTextField();
+        JLabel englishLabel = new JLabel("English Marks:");
+        englishLabel.setForeground(Color.CYAN);
+        englishField = new JTextField();
+        JLabel sanskritLabel = new JLabel("Sanskrit Marks:");
+        sanskritLabel.setForeground(Color.CYAN);
+        sanskritField = new JTextField();
+        JLabel hindiLabel = new JLabel("Hindi Marks:");
+        hindiLabel.setForeground(Color.CYAN);
+        hindiField = new JTextField();
+
+        JButton calculateButton = new JButton("Calculate");
+        calculateButton.setForeground(Color.CYAN);
+        calculateButton.addActionListener(this);
+
+        resultLabel = new JLabel("");
+        resultLabel.setForeground(Color.CYAN);
+
+        add(mathLabel);
+        add(mathField);
+        add(scienceLabel);
+        add(scienceField);
+        add(socialLabel);
+        add(socialField);
+        add(englishLabel);
+        add(englishField);
+        add(sanskritLabel);
+        add(sanskritField);
+        add(hindiLabel);
+        add(hindiField);
+        add(new JLabel(""));
+        add(calculateButton);
+        add(resultLabel);
+
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand().equals("Calculate")) {
+            try {
+                // Parse input values from text fields
+                double mathMarks = Double.parseDouble(mathField.getText());
+                double scienceMarks = Double.parseDouble(scienceField.getText());
+                double socialMarks = Double.parseDouble(socialField.getText());
+                double englishMarks = Double.parseDouble(englishField.getText());
+                double sanskritMarks = Double.parseDouble(sanskritField.getText());
+                double hindiMarks = Double.parseDouble(hindiField.getText());
+
+                // Check if marks are within the valid range (0-100)
+                if (isValidMarks(mathMarks) && isValidMarks(scienceMarks) && isValidMarks(socialMarks)
+                        && isValidMarks(englishMarks) && isValidMarks(sanskritMarks) && isValidMarks(hindiMarks)) {
+                    // Calculate total marks and average percentage
+                    double totalMarks = mathMarks + scienceMarks + socialMarks + englishMarks + sanskritMarks + hindiMarks;
+                    double averagePercentage = (totalMarks / 600) * 100;
+
+                    // Determine the grade based on average percentage
+                    String grade;
+                    if (averagePercentage >= 90) {
+                        grade = "A+";
+                    } else if (averagePercentage >= 80) {
+                        grade = "A";
+                    } else if (averagePercentage >= 70) {
+                        grade = "B";
+                    } else if (averagePercentage >= 60) {
+                        grade = "C";
+                    } else if (averagePercentage >= 50) {
+                        grade = "D";
+                    } else {
+                        grade = "F";
+                    }
+
+                    // Display the result in the result label
+                    String resultText = "Total Marks: " + totalMarks + ", Average Percentage: " + averagePercentage + "%, Grade: " + grade;
+                    resultLabel.setText(resultText);
+                } else {
+                    // Display an error message in a dialog box for invalid marks
+                    JOptionPane.showMessageDialog(this, "Invalid input. Please enter numeric values between 0 and 100 for marks.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                // Handle invalid input
+                resultLabel.setText("Invalid input. Please enter numeric values for marks.");
+            }
+        }
+    }
+
+    private boolean isValidMarks(double marks) {  //for checking the no. entered by user is smaller than 100
+        return marks >= 0 && marks <= 100;
+    }
+
+    public static void main(String[] args) {
+        new StudentGradeCalculator();
+    }
+}
