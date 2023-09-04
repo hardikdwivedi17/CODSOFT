@@ -1,0 +1,126 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class ATMInterface extends JFrame {
+    private JTextField withdrawField;
+    private JTextField depositField;
+    private BankAccount userAccount;
+
+    public ATMInterface(BankAccount account) {
+        this.userAccount = account;
+        setTitle("ATM Interface");
+        setSize(400, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new GridLayout(4, 2));
+        
+        //label for withdrawal and deposit
+        JLabel withdrawLabel = new JLabel("Withdraw Amount:");
+        withdrawField = new JTextField();
+
+        JLabel depositLabel = new JLabel("Deposit Amount:");
+        depositField = new JTextField();
+
+        JButton withdrawButton = new JButton("Withdraw");  //click to withdraw money
+        withdrawButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                withdraw();
+            }
+        });
+
+        JButton depositButton = new JButton("Deposit");   //click todeposit money
+        depositButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deposit();
+            }
+        });
+
+        JButton balanceButton = new JButton("Check Balance");  //click to check balance
+        balanceButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                checkBalance();
+            }
+        });
+
+        add(withdrawLabel);
+        add(withdrawField);
+        add(depositLabel);
+        add(depositField);
+        add(withdrawButton);
+        add(depositButton);
+        add(balanceButton);      //added all the components to window panel
+
+        setVisible(true);
+    }
+
+    private void withdraw() {    //function for withdrawal of money
+        try {
+            double withdrawAmount = Double.parseDouble(withdrawField.getText());
+
+            if (userAccount.withdraw(withdrawAmount)) {
+                JOptionPane.showMessageDialog(this, "Withdrawal successful.");
+                clearFields();
+            } else {
+                JOptionPane.showMessageDialog(this, "Insufficient funds or invalid amount.");
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid input. Please enter a valid amount.");
+        }
+    }
+
+    private void deposit() {     //function for deposition of money
+        try {
+            double depositAmount = Double.parseDouble(depositField.getText());
+            userAccount.deposit(depositAmount);
+            JOptionPane.showMessageDialog(this, "Deposit successful.");
+            clearFields();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid input. Please enter a valid amount.");
+        }
+    }
+
+    private void checkBalance() {   //function for checking balance
+        JOptionPane.showMessageDialog(this, "Current Balance: $" + String.format("%.2f", userAccount.getBalance()));
+    }
+
+    private void clearFields() {
+        withdrawField.setText("");
+        depositField.setText("");
+    }
+
+    public static void main(String[] args) {
+        BankAccount account = new BankAccount(1000.0); // Initialize with a balance of $1000
+        SwingUtilities.invokeLater(() -> new ATMInterface(account));
+    }
+}
+
+class BankAccount {          //bank account class for storing user balance
+    private double balance;
+
+    public BankAccount(double initialBalance) {
+        balance = initialBalance;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+        }
+    }
+
+    public boolean withdraw(double amount) {
+        if (amount > 0 && balance >= amount) {
+            balance -= amount;
+            return true;
+        }
+        return false;
+    }
+}
